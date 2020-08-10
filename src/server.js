@@ -10,21 +10,20 @@ const {
     pageStudy,
     pageGiveClasses,
     saveClasses
-} = require(`./pages`)
+} = require('./pages')
 
 // importar nunjucks (Template engine)
 const nunjucks = require('nunjucks')
 //configurar nunjucks
-nunjucks.configure('src/views', {
-    //qual servidor estamos usando server = require('express')
+nunjucks.configure('src/views', {    
     express: server,
     oncache: true,
-})
+})//qual servidor estamos usando server = require('express')
 
 //Servidor
 server
 //receber os dados do req.body
-.use(express.urlencoded( {extended: true }))
+.use(express.urlencoded({ extended: true }))
 
 // configurar arquivos estaticos (css, scripts, imagens)
 .use(express.static("public")) //configuração do servidor criando var "express" atalho para require usando a pasta correta com as propriedades

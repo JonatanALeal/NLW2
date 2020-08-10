@@ -38,7 +38,7 @@ module.exports = async function(db, { proffyValue, classValue, classScheduleValu
     
     // inserir dados na tabela class_schedule - vai precisar de loop - map == forEach - return terá um novo array através do map
 
-    const insertedAllclassScheduleValues = classScheduleValues.map((classScheduleValue) => {
+    const insertedAllclassesScheduleValues = classScheduleValues.map((classScheduleValue) => {
         return db.run(`
             INSERT INTO class_schedule (
                 class_id,
@@ -56,5 +56,5 @@ module.exports = async function(db, { proffyValue, classValue, classScheduleValu
     })
 
     // aqui vai executar todos db.runs() das class_schedules - através da promessa usando a coleção de dados registradas pelo user 
-    await Promise.all(insertedAllclassScheduleValues)
+    await Promise.all(insertedAllclassesScheduleValues)
 }

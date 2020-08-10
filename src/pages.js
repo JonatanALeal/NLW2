@@ -1,31 +1,31 @@
-const Database = require(`./database/db`)
+const Database = require('./database/db')
 
 //importando os dados do formulario
-const { subjects, weekdays, getSubject, convertHoursToMinutes } = require(`./utils/format`)
+const { subjects, weekdays, getSubjects, convertHoursToMinutes } = require('./utils/format')
 
 
 //pagina inicial
-function pageLanding(req,res) {
+function pageLanding(req, res) {
     return res.render("index.htm")
 }
 
 // pelo render o nunjucks envia lista de dados cadastrados na const proffys - cadstrar no study.htm -> main -> h1 {{proffys}}
 
 //pagina de estudo
-async function pageStudy(req,res) {
+async function pageStudy(req, res) {
     // infos do filtro de horário console.log(req.query)
     // filtrar somente os dados respectivos cadastrados 
-    const filters = req.body // filters é o botão filtro que envia e recebe a opção do user
-
+     // filters é o botão filtro que envia e recebe a opção do user
+     const filters = req.query
     //condição para testar os filtros se estiver vazio
-    if(!filters.subject || !filters.weekday || !filters.time){
-        return res.render("study.htm", { filters , subjects, weekdays })
+    if (!filters.subject || !filters.weekday || !filters.time ){
+        return res.render("study.htm", {filters , subjects, weekdays})
     }
 }
     //console.log('Não tem campo vazios')
 
     //converter horas em minutos
-    const timeToMinutes = convertHoursToMinutes(filters.time)
+const timeToMinutes = convertHoursToMinutes(filters.time)
 
     // construir a consulta 
     const query = `
@@ -37,8 +37,8 @@ async function pageStudy(req,res) {
             FROM class_schedule
             WHERE class_schedule.class_id = classes.id
             AND class_schedule.weekday = ${filters.weekday}
-            AND class_schedule.time_from <= ${filters.timeToMinutes}
-            AND class_schedule.time_to > ${filters.timeToMinutes}
+            AND class_schedule.time_from <= ${timeToMinutes}
+            AND class_schedule.time_to > ${timeToMinutes}
         )
         AND classes.subject = '${filters.subject}'
     `
@@ -46,22 +46,19 @@ async function pageStudy(req,res) {
     // IMPORTANTE ----------------------------------
     // Caso haja erro na fora da consulta do banco de dados
     try {
-        const db =  Database
-        const proffys =  db.all(query)
+        const db = await Database
+        const proffys =  await db.all(query)
 
-        proffys.map( (proffy) => {
-            proffy.subject = getSubject(proffy.subject)
+        proffys.map((proffy) => {
+            proffy.subject = getSubjects(proffy.subject)
 
         })
 
-        return res.render('study.htm', {proffys, subjects, filters, weekdays})
+        return res.render("study.htm", { proffys, subjects, filters, weekdays }) //usando cost acima array proffys e title
 
     } catch (error) {
         console.log(error)
     }
-
-    return res.render("study.htm", { filters, subjects, weekdays }) //usando cost acima array proffys e title
-
 
 //cadastro de novos professores
 function pageGiveClasses(req,res) {
@@ -96,7 +93,9 @@ async function saveClasses(req,res) {
 
     try { 
         const db = await Database
-        await createProffy(db, {proffyValue, classValue, classScheduleValues})
+        await createProffy(db, { proffyValue, classValue, classScheduleValues })
+
+        // info na url
 
         let queryString = "?subject=" + req.body.subject
         queryString += "&weekday=" + req.body.weekday[0]

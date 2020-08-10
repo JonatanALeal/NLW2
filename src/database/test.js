@@ -32,18 +32,16 @@ Database.then(async (db) => {
             time_to: 1220
         }
     ]
-
     // executar a função
     //await createProffy(db, {proffyValue,classValue, classScheduleValues})
 
 
     //Consultar dados inseridos
+    // todos os proffys
+    const selectedProffys = await db.all("SELECT * FROM proffys")
+    /console.log(selectedProffys)
 
-    // tods os proffys
-    const selectedProffys = await db.all(`SELECT * FROM proffys`)
-    //console.log(selectedProffys)
-
-    //consultar as classes de um determinado professor e trazer junto os dados do professor - usar (``) na consulta com tiver mais linhas na consulta
+    /*consultar as classes de um determinado professor e trazer junto os dados do professor - usar (``) na consulta com tiver mais linhas na consulta
     const selectClassesAndProffys = await db.all(`
         SELECT classes.*, proffys.*
         FROM proffys
@@ -64,5 +62,5 @@ Database.then(async (db) => {
         AND class_schedule.time_to > "520"
 
     `)
-    console.log(selectClassesSchedules)
+    console.log(selectClassesSchedules)*/
 })
