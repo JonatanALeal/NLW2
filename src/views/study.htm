@@ -76,14 +76,15 @@
                     
                     </div>
 
-                    <button class="submit">Filtrar</button>
+                    <button 
+                    type="fiters" class="submit">Filtrar</button>
                 </form>
             </div>
         </header>
 
         <main> 
 
-            {% if proffys == " " %}
+            {% if proffys == "" %}
                 <p class="no-results">Nenhum Proffy Encontrado</p>
             {% else %}
 
@@ -117,7 +118,7 @@
             </article>
             {%endfor%}
             
-            
+            {% endif %}
         </main>
     </div>
 </body>

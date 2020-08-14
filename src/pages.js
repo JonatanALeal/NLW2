@@ -1,7 +1,7 @@
 const Database = require('./database/db')
 
 //importando os dados do formulario
-const { subjects, weekdays, getSubjects, convertHoursToMinutes } = require('./utils/format')
+const { subjects, weekdays, getSubject, convertHoursToMinutes } = require('./utils/format')
 
 
 //pagina inicial
@@ -16,16 +16,17 @@ async function pageStudy(req, res) {
     // infos do filtro de horário console.log(req.query)
     // filtrar somente os dados respectivos cadastrados 
      // filters é o botão filtro que envia e recebe a opção do user
-     const filters = req.query
+    const filters = req.query
     //condição para testar os filtros se estiver vazio
     if (!filters.subject || !filters.weekday || !filters.time ){
-        return res.render("study.htm", {filters , subjects, weekdays})
+        return res.render("study.htm", {filters, subjects, weekdays })
     }
-}
+
     //console.log('Não tem campo vazios')
 
-    //converter horas em minutos
-const timeToMinutes = convertHoursToMinutes(filters.time)
+    //converter horas em minutos - formatar time (:) para poder calcular < > calculo matemático - time vai estar em String precisa dividir os valores em 2 arrays = split - ex: "09:00" .split (':') - ("09":"00") hora e minuto calculo esta no format.js
+        
+    const timeToMinutes = convertHoursToMinutes(filters.time)
 
     // construir a consulta 
     const query = `
@@ -47,7 +48,7 @@ const timeToMinutes = convertHoursToMinutes(filters.time)
     // Caso haja erro na fora da consulta do banco de dados
     try {
         const db = await Database
-        const proffys =  await db.all(query)
+        const proffys = await db.all(query) // cont query acima
 
         proffys.map((proffy) => {
             proffy.subject = getSubjects(proffy.subject)
@@ -59,9 +60,26 @@ const timeToMinutes = convertHoursToMinutes(filters.time)
     } catch (error) {
         console.log(error)
     }
+}
 
 //cadastro de novos professores
 function pageGiveClasses(req,res) {
+    /*const data = req.query //adicionar dados ao objeto const proffys - infos preenchidas no formulário "dar aulas"
+    //console.log(data)
+    
+    const isNotEmpty = Object.keys(data).length > 0
+    //criar um if se houver dados = data
+    if (isNotEmpty) {
+    //console.log('entrei aqui')
+
+    // usando o get.subject enviando numero do array da matéria
+       data.subject = getSubject(data.subject) 
+    
+    //gravando os data no objeto proffys esta em memoria precisa guardar em um banco de dados 
+        proffys.push(data)
+
+        return res.redirect("/study")
+    }*/
     
     return res.render("give-classes.htm", {subjects, weekdays})
 }
@@ -69,6 +87,8 @@ function pageGiveClasses(req,res) {
 async function saveClasses(req,res) {
     const createProffy = require('./database/createProffy')
    
+    //const data = req.body 
+    
     const proffyValue = {
         name: req.body.name,
         avatar: req.body.avatar,
@@ -81,15 +101,11 @@ async function saveClasses(req,res) {
         cost: req.body.cost
     }
 
-    const classScheduleValues = req.body.weekday.map( (weekday,index) => {
-
-        return {
-            weekday,
-            time_from: convertHoursToMinutes(req.body.time_from[index]),
-            time_to: convertHoursToMinutes(req.body.time_to[index])
-
-        }
-    })
+    const classScheduleValues = req.body.weekday.map((weekday, index) => ({
+        weekday,
+        time_from: convertHoursToMinutes(req.body.time_from[index]),
+        time_to: convertHoursToMinutes(req.body.time_to[index])
+    }))
 
     try { 
         const db = await Database
@@ -103,25 +119,11 @@ async function saveClasses(req,res) {
        
          // IF VAZIO volta para pg study.htm
          return res.redirect("/study" + queryString)
+
     } catch (error) {
         console.log(error)
     }
-   
-    //const data = req.query //adicionar dados ao objeto const proffys - infos preenchidas no formulário "dar aulas"
-    //console.log(data)
-    
-    /*const isNotEmpty = Object.keys(data).length > 0
-    //criar um if se houver dados = data
-    if (isNotEmpty) {
-    //console.log('entrei aqui')
-
-    // usando o get.subject enviando numero do array da matéria
-       data.subject = getSubject(data.subject) 
-    
-    //gravando os data no objeto proffys esta em memoria precisa guardar em um banco de dados 
-        proffys.push(data)
-    }*/  
-    
+       
 }
 
 //exportando para server.js

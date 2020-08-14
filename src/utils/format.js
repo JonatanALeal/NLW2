@@ -41,7 +41,7 @@ function getSubject(subjectNumber) {
 }
 
 //convertendo horas em minutos
-function convertHoursToMinutes(time){
+function convertHoursToMinutes(time) {
     const [hour, minutes] = time.split(":")
     //funcionalidade Number para garantir resposta numérica
     return Number((hour * 60) + minutes)
@@ -58,6 +58,5 @@ module.exports = {
         subjects,
         weekdays,
         getSubject,
-        convertHoursToMinutes
-       
+        convertHoursToMinutes       
 }

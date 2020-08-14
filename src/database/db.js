@@ -3,7 +3,7 @@ const Database = require('sqlite-async')
 
 
 //registrando a função do db e executando
-function execute(db) {
+async function execute(db) {
     //console.log('cheguei aqui')
     //console.log(db)
 
