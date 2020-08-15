@@ -51,7 +51,7 @@ async function pageStudy(req, res) {
         const proffys = await db.all(query) // cont query acima
 
         proffys.map((proffy) => {
-            proffy.subject = getSubjects(proffy.subject)
+            proffy.subject = getSubject(proffy.subject)
 
         })
 
@@ -116,6 +116,7 @@ async function saveClasses(req,res) {
         let queryString = "?subject=" + req.body.subject
         queryString += "&weekday=" + req.body.weekday[0]
         queryString += "&time=" + req.body.time_from[0]
+        
        
          // IF VAZIO volta para pg study.htm
          return res.redirect("/study" + queryString)
